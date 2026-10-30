@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -17,12 +17,12 @@ jobs:
           node-version: 18
 
       - name: Package Windows app
+        shell: pwsh
         run: |
           cd windows
           npm install --no-audit --loglevel=error
           npx electron-packager . "MyLiveTV" --platform=win32 --arch=x64 --out=dist --overwrite
-          cd dist
-          zip -qr ../../MyLiveTV-Windows-v2.0.zip MyLiveTV-win32-x64
+          Compress-Archive -Path dist/MyLiveTV-win32-x64 -DestinationPath ../MyLiveTV-Windows-v2.0.zip -Force
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
