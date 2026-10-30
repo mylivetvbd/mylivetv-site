@@ -1,0 +1,26 @@
+name: SEO Content Robot
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # প্রতিদিন সকাল ৮টা (বাংলাদেশ সময়)
+  workflow_dispatch:       # হাতে চালানোর বাটন
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate daily pages
+        run: python3 gen_site.py
+
+      - name: Commit & push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "📝 দৈনিক খেলার সূচি আপডেট"
+          git push
