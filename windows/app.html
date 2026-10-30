@@ -56,6 +56,7 @@ main{flex:1;display:flex;overflow:hidden;}
   <video id="video" controls autoplay></video>
 </div>
 <script>
+var APP_VER='2.1';fetch('https://raw.githubusercontent.com/mylivetvbd/mylivetv-site/main/winver.json?t='+Date.now()).then(function(r){return r.json();}).then(function(v){if(v&&v.version&&v.version!==APP_VER){var d=document.createElement('div');d.style.cssText='background:#78350f;color:#fde68a;padding:10px 14px;text-align:center;font-weight:800;cursor:pointer;font-size:14px;';d.textContent='🔔 নতুন ভার্সন ('+v.version+') এসেছে — এখানে চাপ দিয়ে নামিয়ে নিন';d.onclick=function(){window.open(v.url||'https://mylivetv.mirdigitalagency.com/');};document.body.insertBefore(d,document.body.firstChild);}}).catch(function(){});
 var PL='https://raw.githubusercontent.com/mylivetvbd/mylivetv/main/my-channels-master.m3u';
 var EV='https://raw.githubusercontent.com/mylivetvbd/mylivetv/main/events.json';
 var chans=[], cats=[], curCat=null, hls=null;
