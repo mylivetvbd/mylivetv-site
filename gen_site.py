@@ -14,7 +14,8 @@ DAY = {"Mon": "সোমবার", "Tue": "মঙ্গলবার", "Wed": "�
 CSS = open("common.css.txt", encoding="utf-8").read()
 GA = """<script async src="https://www.googletagmanager.com/gtag/js?id=G-MP1LHB6N0R"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MP1LHB6N0R');</script>
-<script type="speculationrules">{"prefetch":[{"where":{"href_matches":"/*"},"eagerness":"eager"}],"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>"""
+<script type="speculationrules">{"prefetch":[{"where":{"href_matches":"/*"},"eagerness":"eager"}],"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
+<style>footer{text-align:center!important;padding:26px 14px 32px!important;line-height:2.1!important;font-size:13px!important}footer a{white-space:nowrap}</style>"""
 
 def bd_now():
     return datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=6)
