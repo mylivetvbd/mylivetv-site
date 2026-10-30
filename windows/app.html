@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>My Live TV</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+<style>
+:root{--bg:#040812;--card:#0b1220;--gold:#fbbf24;--txt:#e2e8f0;--mut:#94a3b8;--line:#1e293b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--txt);font-family:'Noto Sans Bengali','Segoe UI',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+header{display:flex;align-items:center;gap:14px;padding:10px 16px;background:#060b16;border-bottom:1px solid var(--line);}
+header b{font-size:18px;color:#fff;white-space:nowrap;}header b span{color:var(--gold);}
+.tab{background:none;border:1px solid var(--line);color:var(--mut);border-radius:999px;padding:7px 18px;font:700 14px inherit;cursor:pointer;}
+.tab.on{background:linear-gradient(135deg,#dc2626,#ea580c);color:#fff;border-color:#fde68a;}
+#q{margin-left:auto;background:var(--card);border:1px solid var(--line);color:#fff;border-radius:999px;padding:8px 16px;font:14px inherit;width:240px;outline:none;}
+main{flex:1;display:flex;overflow:hidden;}
+#cats{width:230px;overflow-y:auto;border-right:1px solid var(--line);padding:10px;}
+.cat{display:block;width:100%;text-align:left;background:none;border:0;color:var(--mut);padding:9px 12px;border-radius:10px;font:700 13.5px inherit;cursor:pointer;}
+.cat.on{background:#13213a;color:var(--gold);}
+#list{flex:1;overflow-y:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;align-content:start;}
+.ch{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;text-align:center;}
+.ch:hover{border-color:var(--gold);}
+.ch img{width:44px;height:44px;object-fit:contain;margin-bottom:6px;}
+.ch div{font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.5;}
+.ch em{display:block;font-style:normal;font-size:10.5px;margin-top:4px;color:#64748b;}
+.ch em.ok{color:#34d399;}.ch em.bad{color:#f87171;}
+.ch.dead{opacity:.42;}
+#khela{flex:1;overflow-y:auto;padding:16px;display:none;max-width:760px;margin:0 auto;}
+.m{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:10px;}
+.m .lg{color:var(--mut);font-size:12px;}.m .tm{font-size:16px;font-weight:800;color:#fff;margin:3px 0 6px;}
+.m .chbtn{display:inline-block;background:#0f2540;border:1px solid #1e40af;color:#bae6fd;border-radius:8px;padding:6px 12px;font:700 12.5px inherit;margin:3px 4px 0 0;cursor:pointer;}
+#player{position:fixed;inset:0;background:#000;display:none;z-index:100;flex-direction:column;}
+#player video{flex:1;width:100%;background:#000;}
+#pbar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#060b16;}
+#pname{font-weight:800;color:var(--gold);}
+#perr{color:#f87171;font-size:13px;}
+#pclose{margin-left:auto;background:#7f1d1d;border:0;color:#fff;border-radius:8px;padding:8px 18px;font:800 14px inherit;cursor:pointer;}
+#loading{padding:40px;text-align:center;color:var(--mut);width:100%;}
+</style>
+</head>
+<body>
+<header>
+  <b>My <span>Live</span> TV</b>
+  <button class="tab on" id="tabTv">📺 চ্যানেল</button>
+  <button class="tab" id="tabKhela">🏏 খেলা</button>
+  <a class="tab" style="text-decoration:none;" href="https://mylivetvbd.github.io/mylivetv/studio.html" target="_blank">🏟️ 3D স্টুডিও</a>
+  <input id="q" placeholder="🔍 চ্যানেল খুঁজুন...">
+</header>
+<main>
+  <div id="cats"></div>
+  <div id="list"><div id="loading">⏳ চ্যানেল তালিকা নামছে, একটু অপেক্ষা করুন...</div></div>
+  <div id="khela"></div>
+</main>
+<div id="player">
+  <div id="pbar"><span id="pname"></span><span id="perr"></span><button id="pclose">✕ বন্ধ করুন</button></div>
+  <video id="video" controls autoplay></video>
+</div>
+<script>
+var PL='https://raw.githubusercontent.com/mylivetvbd/mylivetv/main/my-channels-master.m3u';
+var EV='https://raw.githubusercontent.com/mylivetvbd/mylivetv/main/events.json';
+var chans=[], cats=[], curCat=null, hls=null;
+var st={}, scanTok=0; // লিংক-স্ক্যানার: 1=লাইভ, -1=বন্ধ
+function rank(c){ var s=st[c.u]; return s===1?0:(s===-1?2:1); }
+function checkCh(u){
+  return new Promise(function(res){
+    var ac=new AbortController();
+    var t=setTimeout(function(){ ac.abort(); }, 5000);
+    fetch(u,{signal:ac.signal}).then(function(r){
+      clearTimeout(t);
+      if(!r.ok){ res(false); return; }
+      if(u.indexOf('.m3u8')>=0){
+        r.text().then(function(x){ res(x.indexOf('#EXT')>=0); }, function(){ res(false); });
+      } else { res(true); ac.abort(); }
+    }, function(){ clearTimeout(t); res(false); });
+  });
+}
+function scanVisible(arr){
+  var tok=++scanTok, pend=[];
+  arr.forEach(function(c,i){ if(st[c.u]===undefined) pend.push([c,i]); });
+  if(!pend.length) return;
+  var p=0, act=0, dirty=false;
+  function mark(i,ok){
+    if(tok!==scanTok) return;
+    var d=document.querySelector('.ch[data-i="'+i+'"]'); if(!d) return;
+    var em=d.querySelector('em'); if(!em) return;
+    if(ok){ em.className='ok'; em.textContent='🟢 লাইভ'; }
+    else { em.className='bad'; em.textContent='⛔ বন্ধ'; d.classList.add('dead'); }
+  }
+  function next(){
+    if(tok!==scanTok) return;
+    if(p>=pend.length){ if(act===0 && dirty){ scanTok++; renderList(); } return; }
+    var item=pend[p++]; act++;
+    checkCh(item[0].u).then(function(ok){
+      st[item[0].u]=ok?1:-1;
+      if(!ok) dirty=true;
+      mark(item[1],ok);
+      act--; next();
+    });
+  }
+  for(var k=0;k<12 && k<pend.length;k++) next();
+}
+
+function parseM3U(text){
+  var out=[], name='', grp='', logo='';
+  var lines=text.split('\n');
+  for(var i=0;i<lines.length;i++){
+    var l=lines[i].trim();
+    if(l.indexOf('#EXTINF')===0){
+      var g=/group-title="([^"]*)"/.exec(l); grp=g?g[1]:'অন্যান্য';
+      var lg=/tvg-logo="([^"]*)"/.exec(l); logo=lg?lg[1]:'';
+      name=l.split(',').pop().trim();
+    } else if(l && l.indexOf('#')!==0 && name){
+      out.push({n:name, g:grp, l:logo, u:l.split('|')[0]});
+      name='';
+    }
+  }
+  return out;
+}
+function renderCats(){
+  var cnt={};
+  chans.forEach(function(c){ cnt[c.g]=(cnt[c.g]||0)+1; });
+  cats=Object.keys(cnt);
+  var h='';
+  cats.forEach(function(g){
+    h+='<button class="cat'+(g===curCat?' on':'')+'" data-g="'+encodeURIComponent(g)+'">'+g+' ('+cnt[g]+')</button>';
+  });
+  document.getElementById('cats').innerHTML=h;
+  Array.prototype.forEach.call(document.querySelectorAll('.cat'),function(b){
+    b.onclick=function(){ curCat=decodeURIComponent(b.getAttribute('data-g')); renderCats(); renderList(); };
+  });
+}
+function renderList(){
+  var q=document.getElementById('q').value.trim().toLowerCase();
+  var arr=chans.filter(function(c){
+    if(q) return c.n.toLowerCase().indexOf(q)>=0;
+    return c.g===curCat;
+  }).slice(0,400);
+  arr.sort(function(a,b){ return rank(a)-rank(b); }); // লাইভ আগে, বন্ধ সবার নিচে
+  var h='';
+  arr.forEach(function(c,i){
+    var s=st[c.u];
+    var tag = s===1 ? '<em class="ok">🟢 লাইভ</em>' : (s===-1 ? '<em class="bad">⛔ বন্ধ</em>' : '<em>⏳ পরীক্ষা হচ্ছে...</em>');
+    h+='<div class="ch'+(s===-1?' dead':'')+'" data-i="'+i+'">'+(c.l?'<img src="'+c.l+'" onerror="this.style.display=\'none\'">':'')+'<div>'+c.n+'</div>'+tag+'</div>';
+  });
+  document.getElementById('list').innerHTML=h||'<div id="loading">কিছু পাওয়া যায়নি</div>';
+  Array.prototype.forEach.call(document.querySelectorAll('.ch'),function(d){
+    d.onclick=function(){ var c=arr[parseInt(d.getAttribute('data-i'))]; play(c.n,c.u); };
+  });
+  scanVisible(arr);
+}
+function play(name,url){
+  document.getElementById('player').style.display='flex';
+  document.getElementById('pname').textContent=name;
+  document.getElementById('perr').textContent='';
+  var v=document.getElementById('video');
+  if(hls){ hls.destroy(); hls=null; }
+  if(url.indexOf('.m3u8')>=0 && window.Hls && Hls.isSupported()){
+    hls=new Hls({maxBufferLength:20});
+    hls.loadSource(url); hls.attachMedia(v);
+    hls.on(Hls.Events.ERROR,function(e,d){
+      if(d.fatal){
+        document.getElementById('perr').textContent='⚠️ চ্যানেলটি এই মুহূর্তে বন্ধ — অন্যটা দেখুন';
+        st[url]=-1; // ভবিষ্যতে এটা নিচে/ম্লান দেখাবে
+      }
+    });
+  } else { v.src=url; }
+  v.onerror=function(){
+    if(document.getElementById('player').style.display==='flex'){
+      document.getElementById('perr').textContent='⚠️ চ্যানেলটি এই মুহূর্তে বন্ধ — অন্যটা দেখুন';
+      st[url]=-1;
+    }
+  };
+  v.play().catch(function(){});
+}
+document.getElementById('pclose').onclick=function(){
+  var v=document.getElementById('video');
+  v.pause(); v.src='';
+  if(hls){ hls.destroy(); hls=null; }
+  document.getElementById('player').style.display='none';
+};
+document.getElementById('q').oninput=renderList;
+document.getElementById('tabTv').onclick=function(){
+  this.classList.add('on'); document.getElementById('tabKhela').classList.remove('on');
+  document.getElementById('khela').style.display='none';
+  document.getElementById('cats').style.display='block';
+  document.getElementById('list').style.display='grid';
+};
+document.getElementById('tabKhela').onclick=function(){
+  this.classList.add('on'); document.getElementById('tabTv').classList.remove('on');
+  document.getElementById('cats').style.display='none';
+  document.getElementById('list').style.display='none';
+  document.getElementById('khela').style.display='block';
+  loadKhela();
+};
+var BN={'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+function bnNum(s){ return String(s).replace(/[0-9]/g,function(d){return BN[d];}); }
+function bdTime(ts){
+  var d=new Date((ts+21600)*1000);
+  var h=d.getUTCHours(), m=d.getUTCMinutes();
+  var ap=h<4?'রাত':h<6?'ভোর':h<12?'সকাল':h<15?'দুপুর':h<18?'বিকাল':h<20?'সন্ধ্যা':'রাত';
+  var h12=h%12||12;
+  return ap+' '+bnNum(h12)+':'+bnNum((m<10?'0':'')+m)+' ('+bnNum(d.getUTCDate())+'/'+bnNum(d.getUTCMonth()+1)+')';
+}
+function loadKhela(){
+  var k=document.getElementById('khela');
+  k.innerHTML='<div id="loading">⏳ খেলার সূচি আসছে...</div>';
+  fetch(EV+'?t='+Date.now()).then(function(r){return r.json();}).then(function(d){
+    var h='<h2 style="color:var(--gold);margin-bottom:12px;">🏏 আজকের ও আগামী খেলা</h2>';
+    (d.events||[]).sort(function(a,b){return a.t-b.t;}).forEach(function(e,ei){
+      var badge = e.st==='in' ? '<span style="color:#f87171;font-weight:800;">🔴 চলছে</span>' : (e.st==='post' ? '<span style="color:#64748b;">✔ শেষ</span>' : bdTime(e.t));
+      var cb=''; (e.ch||[]).forEach(function(c,ci){ cb+='<span class="chbtn" data-e="'+ei+'" data-c="'+ci+'">▶ '+c.n+'</span>'; });
+      h+='<div class="m"><div class="lg">'+(e.sp==='c'?'🏏':'⚽')+' '+(e.lg||'')+'</div><div class="tm">'+e.h+' vs '+e.a+'</div><div style="font-size:13.5px;">'+badge+'</div>'+(cb?'<div style="margin-top:7px;">'+cb+'</div>':'')+(e.note?'<div style="color:var(--gold);font-size:12px;margin-top:5px;">ℹ️ '+e.note+'</div>':'')+'</div>';
+    });
+    k.innerHTML=h;
+    window.__ev=d.events;
+    Array.prototype.forEach.call(document.querySelectorAll('.chbtn'),function(b){
+      b.onclick=function(){
+        var e=window.__ev[parseInt(b.getAttribute('data-e'))];
+        var c=e.ch[parseInt(b.getAttribute('data-c'))];
+        play(c.n, c.u.split('|')[0]);
+      };
+    });
+  }).catch(function(){ k.innerHTML='<div id="loading">সূচি আনা গেল না — ইন্টারনেট দেখুন</div>'; });
+}
+fetch(PL+'?t='+Date.now()).then(function(r){return r.text();}).then(function(t){
+  chans=parseM3U(t);
+  curCat=chans.length?chans[0].g:null;
+  renderCats(); renderList();
+}).catch(function(){
+  document.getElementById('list').innerHTML='<div id="loading">তালিকা আনা গেল না — ইন্টারনেট সংযোগ দেখে অ্যাপটি আবার খুলুন</div>';
+});
+</script>
+</body>
+</html>
