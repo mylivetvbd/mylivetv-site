@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>লাইভ স্ট্রিমে টিভির চেয়ে দেরি কেন হয়? | My Live TV</title>
+<meta name="description" content="ইন্টারনেট স্ট্রিম কেন ১০-৪৫ সেকেন্ড পেছনে থাকে — লেটেন্সির আসল কারণ, কতটা কমানো যায় আর কোনটা আপনার হাতে।">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MP1LHB6N0R"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MP1LHB6N0R');</script>
+<script type="speculationrules">{"prefetch":[{"where":{"href_matches":"/*"},"eagerness":"eager"}],"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
+<style>:root{--bg:#040812;--card:#0b1220;--gold:#fbbf24;--txt:#e2e8f0;--mut:#94a3b8;--line:#1e293b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:radial-gradient(ellipse at 50% 0%,#0a2547 0%,var(--bg) 60%);color:var(--txt);font-family:'Noto Sans Bengali','Hind Siliguri',sans-serif;min-height:100vh;}
+.topbar{position:sticky;top:0;background:rgba(4,8,18,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:50;}
+.topbar .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;}
+.topbar img{width:34px;height:34px;object-fit:contain;}
+.topbar b{color:#fff;font-size:16px;}.topbar b span{color:var(--gold);}
+.topbar nav{margin-left:auto;display:flex;gap:12px;font-size:13px;}
+.topbar a{color:var(--mut);text-decoration:none;font-weight:700;}
+.topbar a:hover{color:var(--gold);}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 60px;}
+h1{font-size:26px;font-weight:900;color:#fff;line-height:1.4;}
+h2{font-size:19px;color:var(--gold);margin:26px 0 10px;}
+p,li{color:#cbd5e1;font-size:15px;line-height:2;margin-bottom:12px;}
+ul,ol{padding-right:0;padding-left:22px;margin-bottom:12px;}
+.lead{color:var(--mut);font-size:14px;line-height:1.9;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;}
+.btn{display:inline-block;background:linear-gradient(135deg,#dc2626,#ea580c);color:#fff;text-decoration:none;font-weight:800;font-size:17px;padding:14px 32px;border-radius:999px;border:1px solid #fde68a;box-shadow:0 8px 28px rgba(220,38,38,.45);}
+.cta{display:block;text-align:center;background:linear-gradient(135deg,#78350f,#92400e);border:1px solid var(--gold);border-radius:14px;padding:15px;color:#fef3c7;text-decoration:none;font-weight:800;margin:24px 0;font-size:15px;}
+footer{border-top:1px solid var(--line);margin-top:40px;padding-top:18px;color:#475569;font-size:12.5px;line-height:2.2;}
+footer a{color:#64748b;}
+.meta{color:#64748b;font-size:12.5px;margin:6px 0 18px;}
+img.resp{max-width:100%;border-radius:14px;border:1px solid var(--line);}
+.topbar b{white-space:nowrap;}
+.topbar a{white-space:nowrap;}
+@media(max-width:430px){.topbar nav{gap:8px;font-size:11.5px;}.topbar b{font-size:14px;}.topbar img{width:28px;height:28px;}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="in">
+<img src="../logo.png" alt="My Live TV"><b>My <span>Live</span> TV</b>
+<nav><a href="../index.html">হোম</a><a href="../khela.html">খেলার সূচি</a><a href="../blog.html">লেখা</a><a href="../index.html#dl">ডাউনলোড</a></nav>
+</div></div>
+<div class="wrap">
+<h1>পাশের বাসায় "ছক্কাআআ!" — আপনার স্ট্রিমে বল এখনো বাতাসে। লাইভে দেরি হয় কেন?</h1>
+<p class="meta">টিভির চেয়ে ইন্টারনেট স্ট্রিম কয়েক সেকেন্ড পিছিয়ে থাকে কেন — কারণ, বাস্তবতা আর যতটুকু কমানো সম্ভব।</p>
+
+<p>মোবাইলে খেলা দেখার সবচেয়ে মজার (নাকি নিষ্ঠুর?) অভিজ্ঞতা: পাশের বাসা থেকে চিৎকার ভেসে এলো, অথচ আপনার পর্দায় বোলার তখনো দৌড় শুরু করেনি। আপনি বুঝে গেলেন — কিছু একটা ঘটেছে, কিন্তু কী ঘটেছে জানতে আরো দশ সেকেন্ড! এই দেরিটার নাম লেটেন্সি। আজ বুঝব এটা আসে কোথা থেকে, আর কতটা কমানো আমাদের হাতে।</p>
+
+<h2>দেরিটা জন্মায় কোথায়?</h2>
+<p>মাঠ থেকে আপনার পর্দা পর্যন্ত ছবিটা আসে একটা লম্বা রিলে দৌড়ে — প্রতিটা ধাপে কয়েক সেকেন্ড করে জমে:</p>
+<ul>
+<li><b>ক্যামেরা → সম্প্রচার কেন্দ্র:</b> ছবি প্রসেস, রিপ্লে-গ্রাফিক্স বসানো — শুরুতেই কিছুটা সময়।</li>
+<li><b>এনকোডিং:</b> বিশাল ভিডিওকে ইন্টারনেটে পাঠানোর মতো ছোট করতে হয় — ভাঁজ করতে সময় লাগে।</li>
+<li><b>টুকরো বানানো:</b> ইন্টারনেট স্ট্রিম পাঠানো হয় ছোট ছোট টুকরোয় (সাধারণত ২-৬ সেকেন্ডের)। একটা টুকরো পুরো তৈরি না হলে পাঠানোই শুরু হয় না — এখানেই সবচেয়ে বড় দেরি।</li>
+<li><b>সার্ভার-যাত্রা:</b> টুকরোগুলো পৃথিবীর নানা সার্ভার ঘুরে আপনার শহরে পৌঁছায়।</li>
+<li><b>আপনার প্লেয়ারের সঞ্চয়:</b> প্লেয়ার ইচ্ছে করেই কয়েক সেকেন্ডের ভিডিও জমিয়ে তারপর চালায় — যাতে নেট এক মুহূর্ত হোঁচট খেলেও ছবি না থামে। এটাই বাফার — দেরির বিনিময়ে মসৃণতা।</li>
+</ul>
+<p>সব মিলিয়ে ইন্টারনেট স্ট্রিম সাধারণত সরাসরি সম্প্রচারের চেয়ে ১০-৪৫ সেকেন্ড পেছনে থাকে। স্যাটেলাইট টিভিও কিন্তু "শূন্য" না — সেখানেও কয়েক সেকেন্ডের পথখরচ আছে!</p>
+
+<h2>দেরি কি একেবারে শূন্য করা যায়?</h2>
+<p>সোজা উত্তর: না — আর কেউ "জিরো ডিলে" প্রতিশ্রুতি দিলে বুঝবেন কথাটা বিক্রির ভাষা, প্রযুক্তির না। ভিডিও ছোট করা, টুকরো বানানো, নিরাপদে পৌঁছে দেওয়া — প্রতিটা ধাপের নিজস্ব ন্যূনতম সময় আছে। প্রযুক্তি এগোচ্ছে ঠিকই (নতুন কিছু পদ্ধতি দেরি ৫ সেকেন্ডের নিচেও নামাতে পারে), কিন্তু সেগুলো এখনো সব চ্যানেলে পৌঁছায়নি।</p>
+
+<h2>তবে এটুকু আপনার হাতে আছে</h2>
+<ul>
+<li><b>স্থির ইন্টারনেট:</b> নেট যত হোঁচটহীন, প্লেয়ারকে তত কম জমিয়ে রাখতে হয়। WiFi ভালো করার উপায় নিয়ে আমাদের <a href="../blog.html">ব্লগে</a> আলাদা লেখাই আছে।</li>
+<li><b>লাইভ-প্রান্তে থাকুন:</b> ভিডিও মাঝে থামালে আপনি আরো পিছিয়ে যান। অনেক প্লেয়ারে "LIVE" লেখায় চাপ দিলে একদম সামনের প্রান্তে ফিরে যাওয়া যায়।</li>
+<li><b>ডিভাইস হালকা রাখুন:</b> দুর্বল ফোনে ডিকোড করতেই দেরি হয় — পেছনের অ্যাপ বন্ধ রাখুন।</li>
+<li><b>ভালো প্লেয়ার:</b> নেটের অবস্থা বুঝে বাফার সামলানো প্লেয়ারের কাজ। আমাদের <a href="../index.html#dl">My Live TV অ্যাপ</a> ঠিক এই ভারসাম্যটাই রাখার চেষ্টা করে — যতটা সম্ভব কম দেরি, ততটা মসৃণ ছবি।</li>
+</ul>
+
+<h2>একটা মজার পরামর্শ</h2>
+<p>লাইভ স্কোরের অ্যাপ আর স্ট্রিম একসাথে চালালে স্কোর আগে জেনে যাবেন — রোমাঞ্চ মাটি! বড় ম্যাচের সময় নোটিফিকেশন বন্ধ রাখুন, ফোনটা উল্টে রাখুন, খেলাটা পর্দায়ই ঘটুক। আর কোন ম্যাচ কোথায় দেখা যাবে তা আগে থেকে জানতে <a href="../khela.html">খেলার সূচি</a> তো আছেই। কয়েক সেকেন্ড দেরিতে দেখা ছক্কাও কিন্তু ছক্কাই — উদযাপনটা নিজের সময়ে করুন!</p>
+</div>
+
+<footer>© My Live TV — বাংলাদেশের ফ্রি লাইভ TV অ্যাপ<br>
+<a href="../about.html">আমাদের সম্পর্কে</a> • <a href="../contact.html">যোগাযোগ</a> • <a href="../privacy.html">প্রাইভেসি পলিসি</a> • <a href="../terms.html">ব্যবহারের শর্তাবলি</a> • <a href="../khela.html">আজকের খেলা</a> • <a href="../blog.html">সব লেখা</a></footer>
+</body>
+</html>
