@@ -13,7 +13,8 @@ MONTH = ["", "জানুয়ারি", "ফেব্রুয়ারি",
 DAY = {"Mon": "সোমবার", "Tue": "মঙ্গলবার", "Wed": "বুধবার", "Thu": "বৃহস্পতিবার", "Fri": "শুক্রবার", "Sat": "শনিবার", "Sun": "রবিবার"}
 CSS = open("common.css.txt", encoding="utf-8").read()
 GA = """<script async src="https://www.googletagmanager.com/gtag/js?id=G-MP1LHB6N0R"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MP1LHB6N0R');</script>"""
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MP1LHB6N0R');</script>
+<script type="speculationrules">{"prefetch":[{"where":{"href_matches":"/*"},"eagerness":"eager"}],"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>"""
 
 def bd_now():
     return datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=6)
