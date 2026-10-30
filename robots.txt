@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /draft-
+Sitemap: https://mylivetvbd.github.io/mylivetv-site/sitemap.xml
