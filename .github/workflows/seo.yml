@@ -2,7 +2,7 @@ name: SEO Content Robot
 
 on:
   schedule:
-    - cron: '0 2 * * *'   # প্রতিদিন সকাল ৮টা (বাংলাদেশ সময়)
+        - cron: '0 2,8,14 * * *'   # সকাল ৮টা, দুপুর ২টা, রাত ৮টা (বাংলাদেশ সময়)
   workflow_dispatch:       # হাতে চালানোর বাটন
 
 permissions:
