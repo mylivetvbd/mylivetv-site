@@ -1,5 +1,6 @@
 // My Live TV — Windows v2.0
 const { app, BrowserWindow, shell } = require('electron');
+const { exec } = require('child_process');
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
@@ -19,14 +20,21 @@ function createWindow() {
     }
   });
   win.loadFile('app.html');
-  // বাইরের লিংক (স্টুডিও ইত্যাদি) ডিফল্ট ব্রাউজারে খুলবে
+  // বাইরের লিংক খোলা: স্টুডিও হলে Edge-এ (বাংলা কণ্ঠ Edge-এই আছে)
+  const openOutside = (url) => {
+    if (process.platform === 'win32' && url.indexOf('studio') >= 0) {
+      exec('start msedge "' + url + '"', (err) => { if (err) shell.openExternal(url); });
+    } else {
+      shell.openExternal(url);
+    }
+  };
   win.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    openOutside(url);
     return { action: 'deny' };
   });
   // রক্ষাকবচ: কোনো বাইরের ঠিকানায় অ্যাপের ভেতরে যাওয়া আটকাও — ব্রাউজারে পাঠাও
   win.webContents.on('will-navigate', (e, url) => {
-    if (url.indexOf('http') === 0) { e.preventDefault(); shell.openExternal(url); }
+    if (url.indexOf('http') === 0) { e.preventDefault(); openOutside(url); }
   });
 }
 
