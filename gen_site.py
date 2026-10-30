@@ -103,6 +103,8 @@ def build_khela():
     up_ev = [e for e in evs if bd(e["t"]).date() > today and e.get("st") != "in"]
     date_bn, day_bn = bn_date(now), DAY.get(now.strftime("%a"), "")
     base = base_url()
+    arc = sorted(glob.glob("archive/*.html"), reverse=True)[:10]
+    arc_html = ''.join(f'<a href="{a}" style="color:#93c5fd;display:inline-block;margin:4px 12px 4px 0;">📅 {a[14:24]}</a>' for a in arc)
     body = f"""<h1>🏏 আজকের খেলার সূচি — <span style="color:var(--gold);">{date_bn}</span> ({day_bn})</h1>
 <p class="lead">আজ কোন খেলা কোন চ্যানেলে দেখাবে — ক্রিকেট ও ফুটবলের লাইভ ম্যাচের সময়, বাংলাদেশ সময়ে। এই পেজ প্রতিদিন স্বয়ংক্রিয়ভাবে হালনাগাদ হয়।</p>
 <h2>আজকের ম্যাচ</h2>
@@ -110,6 +112,7 @@ def build_khela():
 <a class="cta" href="index.html#dl">📲 সব খেলা ফ্রিতে দেখুন — My Live TV অ্যাপ ডাউনলোড করুন</a>
 <h2>আগামী ম্যাচ</h2>
 {''.join(match_html(e) for e in up_ev[:12]) or '<p class="lead">সূচি শিগগিরই আসছে।</p>'}
+{('<h2>আগের দিনের সূচি</h2><p class="lead">' + arc_html + '</p>') if arc_html else ''}
 <p class="lead" style="margin-top:18px;">সূত্র: প্রকাশ্য ক্রীড়াসূচি। সময় পরিবর্তন হতে পারে — চূড়ান্ত তথ্যের জন্য সম্প্রচারকারী চ্যানেল দেখুন।
 আরও পড়ুন: <a href="blog.html" style="color:#93c5fd;">খেলা ও লাইভ TV নিয়ে আমাদের সব লেখা</a>।</p>"""
     title = f"আজকের খেলার সূচি ({date_bn}) — কোন খেলা কোন চ্যানেলে | My Live TV"
@@ -117,7 +120,7 @@ def build_khela():
     open("khela.html", "w", encoding="utf-8").write(wrap_page(title, desc, body, f"{base}/khela.html"))
     os.makedirs("archive", exist_ok=True)
     aname = f"archive/khela-{today.isoformat()}.html"
-    open(aname, "w", encoding="utf-8").write(wrap_page(title, desc, body, f"{base}/{aname}", depth=1).replace('href="index.html', 'href="../index.html').replace('href="blog.html', 'href="../blog.html'))
+    open(aname, "w", encoding="utf-8").write(wrap_page(title, desc, body, f"{base}/{aname}", depth=1).replace('href="index.html', 'href="../index.html').replace('href="blog.html', 'href="../blog.html').replace('href="archive/', 'href="../archive/'))
     check_page("khela.html"); check_page(aname)
     print(f"✔ খেলার সূচি: আজ {len(t_ev)}টি, আগামী {len(up_ev)}টি")
 
