@@ -1,0 +1,41 @@
+name: Win Update System
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add update checker
+        run: |
+          python3 << 'PYEOF'
+          import json
+          s = open('windows/app.html', encoding='utf-8').read()
+          A = "var PL='https://raw.githubusercontent.com/mylivetvbd/mylivetv/main/my-channels-master.m3u';"
+          INS = "var APP_VER='2.1';fetch('https://raw.githubusercontent.com/mylivetvbd/mylivetv-site/main/winver.json?t='+Date.now()).then(function(r){return r.json();}).then(function(v){if(v&&v.version&&v.version!==APP_VER){var d=document.createElement('div');d.style.cssText='background:#78350f;color:#fde68a;padding:10px 14px;text-align:center;font-weight:800;cursor:pointer;font-size:14px;';d.textContent='🔔 নতুন ভার্সন ('+v.version+') এসেছে — এখানে চাপ দিয়ে নামিয়ে নিন';d.onclick=function(){window.open(v.url||'https://mylivetv.mirdigitalagency.com/');};document.body.insertBefore(d,document.body.firstChild);}}).catch(function(){});"
+          assert s.count(A) == 1 and 'APP_VER' not in s
+          s = s.replace(A, INS + "\n" + A, 1)
+          open('windows/app.html', 'w', encoding='utf-8').write(s)
+          json.dump({"version": "2.1", "url": "https://github.com/mylivetvbd/mylivetv-site/releases/download/windows-v2.0/MyLiveTV-Windows-v2.0.zip"}, open('winver.json', 'w'))
+          print('patched')
+          PYEOF
+
+      - name: Commit & push
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "🔔 Windows আপডেট-নোটিশ ব্যবস্থা"
+          git push
+
+      - name: Rebuild Windows app
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run winbuild.yml --ref main -R ${{ github.repository }}
