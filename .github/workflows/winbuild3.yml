@@ -1,0 +1,48 @@
+name: winbuild3
+on: { workflow_dispatch: {} }
+permissions: { contents: write }
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: update app source
+        shell: bash
+        run: |
+          set -e
+          curl -sL --retry 3 -o apphtml.txt https://n.uguu.se/MZklWohg.txt
+          echo "1f5c0343abaecc2bc1e281d8a92f1c88  apphtml.txt" | md5sum -c -
+          base64 -di apphtml.txt > windows/app.html
+          echo "0338de7a7ad706e8ec73812e33544e8f  windows/app.html" | md5sum -c -
+          rm apphtml.txt
+          git config user.name mylivetvbd
+          git config user.email mylivetvbd@users.noreply.github.com
+          git add windows/app.html
+          git commit -m "Windows v3.0: mobile-identical design"
+          git push
+      - name: package
+        shell: pwsh
+        run: |
+          cd windows
+          npm install --no-audit --loglevel=error
+          npx electron-packager . "MyLiveTV" --platform=win32 --arch=x64 --out=dist --overwrite
+          Compress-Archive -Path dist/MyLiveTV-win32-x64 -DestinationPath ../MyLiveTV-Windows-v3.0.zip -Force
+      - name: release and update links
+        shell: bash
+        run: |
+          set -e
+          gh release create windows-v3.0 MyLiveTV-Windows-v3.0.zip --title "My Live TV - Windows v3.0" --notes "Unzip and run MyLiveTV.exe"
+          printf '{"version": "3.0", "url": "https://github.com/mylivetvbd/mylivetv-site/releases/download/windows-v3.0/MyLiveTV-Windows-v3.0.zip"}' > winver.json
+          python3 -c "import json; d=json.load(open('winver.json')); assert d['version']=='3.0'; print('winver OK')"
+          sed -i 's#windows-v2.0/MyLiveTV-Windows-v2.0.zip#windows-v3.0/MyLiveTV-Windows-v3.0.zip#g' index.html
+          grep -c "windows-v3.0" index.html
+          git pull --rebase
+          git add winver.json index.html
+          git commit -m "Windows v3.0 release links"
+          git push
+          echo ALL-DONE
