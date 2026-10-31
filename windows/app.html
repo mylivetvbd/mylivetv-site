@@ -78,7 +78,7 @@ main{flex:1;overflow:hidden;display:flex;flex-direction:column;}
   <video id="video" controls autoplay></video>
 </div>
 <script>
-var APP_VER='3.0';fetch('https://raw.githubusercontent.com/mylivetvbd/mylivetv-site/main/winver.json?t='+Date.now()).then(function(r){return r.json();}).then(function(v){if(v&&v.version&&v.version!==APP_VER){var d=document.createElement('div');d.style.cssText='background:#78350f;color:#fde68a;padding:10px 14px;text-align:center;font-weight:800;cursor:pointer;font-size:14px;';d.textContent='🔔 নতুন ভার্সন ('+v.version+') এসেছে — এখানে চাপ দিয়ে নামিয়ে নিন';d.onclick=function(){window.open(v.url||'https://mylivetv.mirdigitalagency.com/');};document.body.insertBefore(d,document.body.firstChild);}}).catch(function(){});
+var APP_VER='3.1';fetch('https://raw.githubusercontent.com/mylivetvbd/mylivetv-site/main/winver.json?t='+Date.now()).then(function(r){return r.json();}).then(function(v){if(v&&v.version&&v.version!==APP_VER){var d=document.createElement('div');d.style.cssText='background:#78350f;color:#fde68a;padding:10px 14px;text-align:center;font-weight:800;cursor:pointer;font-size:14px;';d.textContent='🔔 নতুন ভার্সন ('+v.version+') এসেছে — এখানে চাপ দিয়ে নামিয়ে নিন';d.onclick=function(){window.open(v.url||'https://mylivetv.mirdigitalagency.com/');};document.body.insertBefore(d,document.body.firstChild);}}).catch(function(){});
 var PL='https://raw.githubusercontent.com/mylivetvbd/mylivetv/main/my-channels-master.m3u';
 var EV='https://raw.githubusercontent.com/mylivetvbd/mylivetv/main/events.json';
 var chans=[], groups={}, gOrder=[], curCat=null, hls=null;
@@ -87,6 +87,10 @@ var hideDead=localStorage.getItem('hideDead')==='1';
 var st={}, scanTok=0;
 
 var catEn={
+"🎬 হিন্দি মুভি":"🎬 Hindi Movies","🎬 ইংলিশ মুভি":"🎬 English Movies",
+"🎥 ডকুমেন্টারি (বাংলা)":"🎥 Documentary (Bangla)","🎥 ডকুমেন্টারি (হিন্দি)":"🎥 Documentary (Hindi)",
+"🎥 ডকুমেন্টারি (ইংলিশ)":"🎥 Documentary (English)","🎥 ডকুমেন্টারি (গ্লোবাল)":"🎥 Documentary (Global)",
+"🕌 ইসলামিক (গ্লোবাল)":"🕌 Islamic (Global)","🕉️ হিন্দু (গ্লোবাল)":"🕉️ Hindu (Global)","✝️ খ্রিস্টান (গ্লোবাল)":"✝️ Christian (Global)",
 "📰 বাংলা নিউজ":"📰 Bangla News","🎬 বাংলা মুভি":"🎬 Bangla Movies","📼 বাংলা সিরিয়াল":"📼 Bangla Serials",
 "🧒 বাংলা কার্টুন":"🧒 Bangla Cartoons","⚾ বেসবল":"⚾ Baseball","🏉 রাগবি":"🏉 Rugby","🏒 হকি":"🏒 Hockey",
 "🇧🇩 বাংলা চ্যানেল":"🇧🇩 Bangla Channels","🇮🇳 ইন্ডিয়ান বাংলা":"🇮🇳 Indian Bangla","🇮🇳 হিন্দি চ্যানেল":"🇮🇳 Hindi Channels",
